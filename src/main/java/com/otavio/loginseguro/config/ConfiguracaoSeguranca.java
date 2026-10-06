@@ -20,13 +20,26 @@ public class ConfiguracaoSeguranca {
 
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/cadastro", "/css/**", "/js/**").permitAll()
+                .requestMatchers(
+                    "/login",
+                    "/cadastro",
+                    "/css/**",
+                    "/js/**",
+                    "/images/**"
+                ).permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
+                .loginPage("/login")
+                .usernameParameter("email")
+                .passwordParameter("senha")
+                .defaultSuccessUrl("/inicio", true)
+                .failureUrl("/login?erro")
                 .permitAll()
             )
             .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login?logout")
                 .permitAll()
             );
 

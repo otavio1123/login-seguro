@@ -1,0 +1,42 @@
+package com.otavio.loginseguro.service;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.otavio.loginseguro.dto.CadastroUsuario;
+import com.otavio.loginseguro.model.Usuario;
+import com.otavio.loginseguro.repository.UsuarioRepository;
+
+@Service
+public class UsuarioService {
+
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public UsuarioService(
+            UsuarioRepository usuarioRepository,
+            PasswordEncoder passwordEncoder) {
+
+        this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public Usuario cadastrar(CadastroUsuario cadastro) {
+
+        if (usuarioRepository.existsByEmail(cadastro.getEmail())) {
+            throw new IllegalArgumentException("E-mail já cadastrado");
+        }
+
+        if (!cadastro.getSenha().equals(cadastro.getConfirmarSenha())) {
+            throw new IllegalArgumentException("As senhas não coincidem");
+        }
+
+        Usuario usuario = new Usuario(
+                cadastro.getNome(),
+                cadastro.getEmail(),
+                passwordEncoder.encode(cadastro.getSenha())
+        );
+
+        return usuarioRepository.save(usuario);
+    }
+}

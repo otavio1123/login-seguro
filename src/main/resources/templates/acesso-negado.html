@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
@@ -10,21 +10,67 @@
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
         rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <link
+        rel="stylesheet"
+        th:href="@{/css/estilo.css}">
 </head>
 
-<body class="bg-light">
+<body>
 
-<div class="container py-5 text-center">
+<div class="container py-5">
 
-    <h1>Acesso negado</h1>
+    <div class="row justify-content-center">
 
-    <p class="mt-3">
-        Seu perfil não possui permissão para acessar esta área.
-    </p>
+        <div class="col-md-7 col-lg-5">
 
-    <a href="/inicio" class="btn btn-primary">
-        Voltar para o início
-    </a>
+            <div class="card text-center">
+
+                <div class="card-body p-5">
+
+                    <div class="login-icone mb-3">
+                        <i class="bi bi-shield-x"></i>
+                    </div>
+
+                    <h1 class="mb-3">
+                        Acesso negado
+                    </h1>
+
+                    <p class="mb-4">
+                        Seu perfil não possui permissão para acessar esta área.
+                    </p>
+
+                    <a
+                        href="/inicio"
+                        class="btn btn-primary">
+
+                        <i class="bi bi-arrow-left"></i>
+                        Voltar para o início
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 

@@ -12,47 +12,154 @@
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
         rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <link
+        rel="stylesheet"
+        th:href="@{/css/estilo.css}">
 </head>
 
-<body class="bg-light">
+<body>
 
 <div class="container py-5">
 
-    <h1>Sistema de Login Seguro</h1>
+    <div class="painel-topo mb-5">
 
-    <p>
-        Usuário:
-        <strong sec:authentication="name"></strong>
-    </p>
+        <div>
+            <span class="painel-etiqueta">
+                Sistema de Login Seguro
+            </span>
 
-    <div class="d-flex gap-2 flex-wrap mt-4">
+            <h1 class="mt-3">
+                Bem-vindo
+            </h1>
 
-        <a
-            href="/usuario"
-            class="btn btn-primary"
-            sec:authorize="hasAnyRole('USUARIO', 'MODERADOR', 'ADMIN')">
-            Área do Usuário
-        </a>
-
-        <a
-            href="/moderador"
-            class="btn btn-warning"
-            sec:authorize="hasAnyRole('MODERADOR', 'ADMIN')">
-            Área do Moderador
-        </a>
-
-        <a
-            href="/admin"
-            class="btn btn-dark"
-            sec:authorize="hasRole('ADMIN')">
-            Área Administrativa
-        </a>
+            <p class="mb-0">
+                Você está conectado como
+                <strong sec:authentication="name"></strong>
+            </p>
+        </div>
 
         <form th:action="@{/logout}" method="post">
-            <button type="submit" class="btn btn-danger">
+
+            <button
+                type="submit"
+                class="btn btn-sair">
+
+                <i class="bi bi-box-arrow-right"></i>
                 Sair
+
             </button>
+
         </form>
+
+    </div>
+
+    <div class="row g-4">
+
+        <div
+            class="col-md-6 col-lg-4"
+            sec:authorize="hasAnyRole('USUARIO', 'MODERADOR', 'ADMIN')">
+
+            <a
+                href="/usuario"
+                class="card-acesso">
+
+                <div class="icone-acesso icone-usuario">
+                    <i class="bi bi-person"></i>
+                </div>
+
+                <div>
+
+                    <h3>
+                        Área do Usuário
+                    </h3>
+
+                    <p>
+                        Acesse as funcionalidades disponíveis para sua conta.
+                    </p>
+
+                </div>
+
+                <i class="bi bi-arrow-right seta-card"></i>
+
+            </a>
+
+        </div>
+
+        <div
+            class="col-md-6 col-lg-4"
+            sec:authorize="hasAnyRole('MODERADOR', 'ADMIN')">
+
+            <a
+                href="/moderador"
+                class="card-acesso">
+
+                <div class="icone-acesso icone-moderador">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+
+                <div>
+
+                    <h3>
+                        Área do Moderador
+                    </h3>
+
+                    <p>
+                        Acesse as funções disponíveis para moderação.
+                    </p>
+
+                </div>
+
+                <i class="bi bi-arrow-right seta-card"></i>
+
+            </a>
+
+        </div>
+
+        <div
+            class="col-md-6 col-lg-4"
+            sec:authorize="hasRole('ADMIN')">
+
+            <a
+                href="/admin"
+                class="card-acesso">
+
+                <div class="icone-acesso icone-admin">
+                    <i class="bi bi-gear"></i>
+                </div>
+
+                <div>
+
+                    <h3>
+                        Administração
+                    </h3>
+
+                    <p>
+                        Gerencie usuários, perfis e acessos do sistema.
+                    </p>
+
+                </div>
+
+                <i class="bi bi-arrow-right seta-card"></i>
+
+            </a>
+
+        </div>
 
     </div>
 

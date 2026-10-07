@@ -1,11 +1,13 @@
 package com.otavio.loginseguro.controller;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.otavio.loginseguro.model.Perfil;
 import com.otavio.loginseguro.service.UsuarioService;
@@ -31,17 +33,50 @@ public class AdministradorController {
     @PostMapping("/admin/usuarios/{id}/perfil")
     public String alterarPerfil(
             @PathVariable String id,
-            @RequestParam Perfil perfil) {
+            @RequestParam Perfil perfil,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes) {
 
-        usuarioService.alterarPerfil(id, perfil);
+        try {
+
+            usuarioService.alterarPerfil(
+                    id,
+                    perfil,
+                    authentication.getName()
+            );
+
+        } catch (IllegalArgumentException e) {
+
+            redirectAttributes.addFlashAttribute(
+                    "erro",
+                    e.getMessage()
+            );
+        }
 
         return "redirect:/admin/usuarios";
     }
+
     @PostMapping("/admin/usuarios/{id}/status")
-public String alterarStatus(@PathVariable String id) {
+    public String alterarStatus(
+            @PathVariable String id,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes) {
 
-    usuarioService.alterarStatus(id);
+        try {
 
-    return "redirect:/admin/usuarios";
-}
+            usuarioService.alterarStatus(
+                    id,
+                    authentication.getName()
+            );
+
+        } catch (IllegalArgumentException e) {
+
+            redirectAttributes.addFlashAttribute(
+                    "erro",
+                    e.getMessage()
+            );
+        }
+
+        return "redirect:/admin/usuarios";
+    }
 }

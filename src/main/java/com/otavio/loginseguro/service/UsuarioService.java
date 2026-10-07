@@ -48,24 +48,40 @@ public class UsuarioService {
         return usuarioRepository.findAll();
     }
 
-    public void alterarPerfil(String id, Perfil perfil) {
+    public void alterarPerfil(
+            String id,
+            Perfil perfil,
+            String emailAdministrador) {
 
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() ->
                         new IllegalArgumentException("Usuário não encontrado"));
 
+        if (usuario.getEmail().equals(emailAdministrador)) {
+            throw new IllegalArgumentException(
+                    "Você não pode alterar o próprio perfil");
+        }
+
         usuario.setPerfis(Set.of(perfil));
 
         usuarioRepository.save(usuario);
     }
-    public void alterarStatus(String id) {
 
-    Usuario usuario = usuarioRepository.findById(id)
-            .orElseThrow(() ->
-                    new IllegalArgumentException("Usuário não encontrado"));
+    public void alterarStatus(
+            String id,
+            String emailAdministrador) {
 
-    usuario.setAtivo(!usuario.isAtivo());
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Usuário não encontrado"));
 
-    usuarioRepository.save(usuario);
-}
+        if (usuario.getEmail().equals(emailAdministrador)) {
+            throw new IllegalArgumentException(
+                    "Você não pode alterar o próprio status");
+        }
+
+        usuario.setAtivo(!usuario.isAtivo());
+
+        usuarioRepository.save(usuario);
+    }
 }

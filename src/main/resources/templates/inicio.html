@@ -1,8 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Início</title>
 
     <link
@@ -12,19 +16,47 @@
 
 <body class="bg-light">
 
-    <div class="container py-5">
+<div class="container py-5">
 
-        <h1>Login realizado com sucesso</h1>
+    <h1>Sistema de Login Seguro</h1>
 
-        <p>Você está autenticado no sistema.</p>
+    <p>
+        Usuário:
+        <strong sec:authentication="name"></strong>
+    </p>
+
+    <div class="d-flex gap-2 flex-wrap mt-4">
+
+        <a
+            href="/usuario"
+            class="btn btn-primary"
+            sec:authorize="hasAnyRole('USUARIO', 'MODERADOR', 'ADMIN')">
+            Área do Usuário
+        </a>
+
+        <a
+            href="/moderador"
+            class="btn btn-warning"
+            sec:authorize="hasAnyRole('MODERADOR', 'ADMIN')">
+            Área do Moderador
+        </a>
+
+        <a
+            href="/admin"
+            class="btn btn-dark"
+            sec:authorize="hasRole('ADMIN')">
+            Área Administrativa
+        </a>
 
         <form th:action="@{/logout}" method="post">
-            <button class="btn btn-danger" type="submit">
+            <button type="submit" class="btn btn-danger">
                 Sair
             </button>
         </form>
 
     </div>
+
+</div>
 
 </body>
 </html>

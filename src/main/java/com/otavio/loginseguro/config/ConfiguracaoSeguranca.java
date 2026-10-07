@@ -20,6 +20,8 @@ public class ConfiguracaoSeguranca {
 
         http
             .authorizeHttpRequests(auth -> auth
+
+                // páginas públicas
                 .requestMatchers(
                     "/login",
                     "/cadastro",
@@ -27,8 +29,21 @@ public class ConfiguracaoSeguranca {
                     "/js/**",
                     "/images/**"
                 ).permitAll()
+
+                // áreas por perfil
+                .requestMatchers("/admin/**")
+                    .hasRole("ADMIN")
+
+                .requestMatchers("/moderador/**")
+                    .hasAnyRole("MODERADOR", "ADMIN")
+
+                .requestMatchers("/usuario/**")
+                    .hasAnyRole("USUARIO", "MODERADOR", "ADMIN")
+
+                // qualquer outra página exige login
                 .anyRequest().authenticated()
             )
+
             .formLogin(form -> form
                 .loginPage("/login")
                 .usernameParameter("email")
@@ -37,10 +52,15 @@ public class ConfiguracaoSeguranca {
                 .failureUrl("/login?erro")
                 .permitAll()
             )
+
             .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login?logout")
                 .permitAll()
+            )
+
+            .exceptionHandling(exception -> exception
+                .accessDeniedPage("/acesso-negado")
             );
 
         return http.build();

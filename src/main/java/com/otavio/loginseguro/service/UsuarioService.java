@@ -58,4 +58,14 @@ public class UsuarioService {
 
         usuarioRepository.save(usuario);
     }
+    public void alterarStatus(String id) {
+
+    Usuario usuario = usuarioRepository.findById(id)
+            .orElseThrow(() ->
+                    new IllegalArgumentException("Usuário não encontrado"));
+
+    usuario.setAtivo(!usuario.isAtivo());
+
+    usuarioRepository.save(usuario);
+}
 }

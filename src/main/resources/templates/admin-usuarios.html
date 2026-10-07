@@ -21,7 +21,7 @@
         <div>
             <h1>Gerenciar usuários</h1>
             <p class="text-muted mb-0">
-                Altere o perfil de acesso dos usuários cadastrados.
+                Altere o perfil e o status dos usuários cadastrados.
             </p>
         </div>
 
@@ -44,7 +44,9 @@
                         <th>Nome</th>
                         <th>E-mail</th>
                         <th>Perfil atual</th>
+                        <th>Status</th>
                         <th>Alterar perfil</th>
+                        <th>Ação</th>
                     </tr>
                     </thead>
 
@@ -71,6 +73,22 @@
 
                         <td>
 
+                            <span
+                                th:if="${usuario.ativo}"
+                                class="badge text-bg-success">
+                                Ativo
+                            </span>
+
+                            <span
+                                th:unless="${usuario.ativo}"
+                                class="badge text-bg-danger">
+                                Inativo
+                            </span>
+
+                        </td>
+
+                        <td>
+
                             <form
                                 th:action="@{/admin/usuarios/{id}/perfil(id=${usuario.id})}"
                                 method="post"
@@ -80,12 +98,12 @@
                                     name="perfil"
                                     class="form-select">
 
-                                  <option
-                                 th:each="perfil : ${perfis}"
-                                 th:value="${perfil}"
-                                 th:text="${perfil}"
-                                 th:selected="${usuario.perfis.contains(perfil)}">
-                               </option> 
+                                    <option
+                                        th:each="perfil : ${perfis}"
+                                        th:value="${perfil}"
+                                        th:text="${perfil}"
+                                        th:selected="${usuario.perfis.contains(perfil)}">
+                                    </option>
 
                                 </select>
 
@@ -93,6 +111,30 @@
                                     type="submit"
                                     class="btn btn-primary">
                                     Salvar
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                        <td>
+
+                            <form
+                                th:action="@{/admin/usuarios/{id}/status(id=${usuario.id})}"
+                                method="post">
+
+                                <button
+                                    th:if="${usuario.ativo}"
+                                    type="submit"
+                                    class="btn btn-outline-danger">
+                                    Desativar
+                                </button>
+
+                                <button
+                                    th:unless="${usuario.ativo}"
+                                    type="submit"
+                                    class="btn btn-outline-success">
+                                    Ativar
                                 </button>
 
                             </form>

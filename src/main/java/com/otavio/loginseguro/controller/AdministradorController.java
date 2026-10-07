@@ -37,4 +37,11 @@ public class AdministradorController {
 
         return "redirect:/admin/usuarios";
     }
+    @PostMapping("/admin/usuarios/{id}/status")
+public String alterarStatus(@PathVariable String id) {
+
+    usuarioService.alterarStatus(id);
+
+    return "redirect:/admin/usuarios";
+}
 }

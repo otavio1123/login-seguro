@@ -21,7 +21,7 @@ public class ConfiguracaoSeguranca {
         http
             .authorizeHttpRequests(auth -> auth
 
-                // páginas públicas
+                
                 .requestMatchers(
                     "/login",
                     "/cadastro",
@@ -30,9 +30,19 @@ public class ConfiguracaoSeguranca {
                     "/images/**"
                 ).permitAll()
 
-                // áreas por perfil
+                
+                .requestMatchers("/dashboard/**")
+                    .hasRole("ADMIN")
+
+                .requestMatchers("/api/chamados/**")
+                    .hasRole("ADMIN")
+
+                
                 .requestMatchers("/admin/**")
                     .hasRole("ADMIN")
+
+                    .requestMatchers("/api/dashboard/**")
+                     .hasRole("ADMIN")
 
                 .requestMatchers("/moderador/**")
                     .hasAnyRole("MODERADOR", "ADMIN")
@@ -40,7 +50,7 @@ public class ConfiguracaoSeguranca {
                 .requestMatchers("/usuario/**")
                     .hasAnyRole("USUARIO", "MODERADOR", "ADMIN")
 
-                // qualquer outra página exige login
+              
                 .anyRequest().authenticated()
             )
 

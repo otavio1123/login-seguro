@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -43,9 +44,12 @@
 
     </div>
 
-    <div class="row">
 
-        <div class="col-md-6 col-lg-4">
+    <div class="row g-4">
+
+        <!-- Gerenciar usuários -->
+
+        <div class="col-md-6">
 
             <a
                 href="/admin/usuarios"
@@ -73,9 +77,41 @@
 
         </div>
 
+
+        <!-- Dashboard de chamados -->
+
+        <div class="col-md-6">
+
+            <a
+                href="/dashboard"
+                class="card-acesso">
+
+                <div class="icone-acesso icone-admin">
+                    <i class="bi bi-bar-chart-line"></i>
+                </div>
+
+                <div>
+
+                    <h3>
+                        Dashboard de Chamados
+                    </h3>
+
+                    <p>
+                        Consulte indicadores, gráficos, filtros e dados dos chamados técnicos.
+                    </p>
+
+                </div>
+
+                <i class="bi bi-arrow-right seta-card"></i>
+
+            </a>
+
+        </div>
+
     </div>
 
 </div>
 
 </body>
+
 </html>

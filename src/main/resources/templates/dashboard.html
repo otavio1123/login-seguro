@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard Administrativo</title>
+
+    <th:block th:replace="~{fragments/recursos :: recursos}"></th:block>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <span class="painel-etiqueta">Administração</span>
+
+            <h1 class="mt-3 mb-1">Dashboard Administrativo</h1>
+
+            <p class="text-secondary mb-0">
+                Acompanhe os chamados técnicos do sistema.
+            </p>
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <button class="btn btn-primary" onclick="atualizarDashboard()">
+                <i class="bi bi-arrow-clockwise"></i>
+                Atualizar dados
+            </button>
+
+            <a href="/inicio" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i>
+                Voltar
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- Indicadores -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md">
+            <div class="card h-100 p-3">
+                <span class="text-secondary">Total de chamados</span>
+                <h2 id="totalChamados" class="mt-2 mb-0">0</h2>
+            </div>
+        </div>
+
+        <div class="col-md">
+            <div class="card h-100 p-3">
+                <span class="text-secondary">Abertos</span>
+                <h2 id="chamadosAbertos" class="mt-2 mb-0">0</h2>
+            </div>
+        </div>
+
+        <div class="col-md">
+            <div class="card h-100 p-3">
+                <span class="text-secondary">Em andamento</span>
+                <h2 id="chamadosAndamento" class="mt-2 mb-0">0</h2>
+            </div>
+        </div>
+
+        <div class="col-md">
+            <div class="card h-100 p-3">
+                <span class="text-secondary">Concluídos</span>
+                <h2 id="chamadosConcluidos" class="mt-2 mb-0">0</h2>
+            </div>
+        </div>
+
+        <div class="col-md">
+            <div class="card h-100 p-3">
+                <span class="text-secondary">Cancelados</span>
+                <h2 id="chamadosCancelados" class="mt-2 mb-0">0</h2>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Filtros -->
+
+    <div class="card p-4 mb-4">
+
+        <h5 class="mb-3">Filtros</h5>
+
+        <div class="row g-3">
+
+            <div class="col-md-3">
+                <label class="form-label">Data inicial</label>
+                <input type="date" id="dataInicio" class="form-control">
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Data final</label>
+                <input type="date" id="dataFim" class="form-control">
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label">Status</label>
+
+                <select id="status" class="form-select">
+                    <option value="">Todos</option>
+                    <option value="ABERTO">Aberto</option>
+                    <option value="EM_ANDAMENTO">Em andamento</option>
+                    <option value="CONCLUIDO">Concluído</option>
+                    <option value="CANCELADO">Cancelado</option>
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label">Tipo</label>
+
+                <select id="tipo" class="form-select">
+                    <option value="">Todos</option>
+                    <option value="HARDWARE">Hardware</option>
+                    <option value="SOFTWARE">Software</option>
+                    <option value="REDE">Rede</option>
+                    <option value="ACESSO">Acesso</option>
+                    <option value="OUTROS">Outros</option>
+                </select>
+            </div>
+
+            <div class="col-md-2 d-flex align-items-end">
+                <button class="btn btn-primary w-100" onclick="filtrarChamados()">
+                    <i class="bi bi-funnel"></i>
+                    Filtrar
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Gráficos -->
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-lg-7">
+
+            <div class="card p-4 h-100">
+
+                <h5>Chamados atendidos por período</h5>
+
+                <div style="height: 300px;">
+                    <canvas id="graficoPeriodo"></canvas>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-lg-5">
+
+            <div class="card p-4 h-100">
+
+                <h5>Situação dos chamados</h5>
+
+                <div style="height: 300px;">
+                    <canvas id="graficoSituacoes"></canvas>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Tipos -->
+
+    <div class="card p-4 mb-4">
+
+        <h5>Tipos de chamados mais atendidos</h5>
+
+        <div style="height: 280px;">
+            <canvas id="graficoTipos"></canvas>
+        </div>
+
+    </div>
+
+
+    <!-- Chamados -->
+
+    <div class="card p-4">
+
+        <h5 class="mb-3">Chamados</h5>
+
+        <div class="table-responsive">
+
+            <table class="table align-middle">
+<thead>
+<tr>
+    <th>Título</th>
+    <th>Tipo</th>
+    <th>Status</th>
+    <th>Responsável</th>
+    <th>Consideração técnica</th>
+    <th>Data</th>
+</tr>
+</thead>
+
+                <tbody id="tabelaChamados">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    let graficoPeriodo;
+    let graficoSituacoes;
+    let graficoTipos;
+
+
+    async function buscarJson(url) {
+
+        const resposta = await fetch(url);
+
+        if (!resposta.ok) {
+            throw new Error("Erro ao carregar os dados.");
+        }
+
+        return resposta.json();
+    }
+
+
+    async function carregarIndicadores() {
+
+        const dados = await buscarJson('/api/dashboard/indicadores');
+
+        document.getElementById('totalChamados').textContent = dados.total;
+        document.getElementById('chamadosAbertos').textContent = dados.abertos;
+        document.getElementById('chamadosAndamento').textContent = dados.emAndamento;
+        document.getElementById('chamadosConcluidos').textContent = dados.concluidos;
+        document.getElementById('chamadosCancelados').textContent = dados.cancelados;
+    }
+
+
+    async function carregarSituacoes() {
+
+        const dados = await buscarJson('/api/dashboard/situacoes');
+
+        const labels = dados.map(item =>
+            item.situacao.replace('_', ' ')
+        );
+
+        const valores = dados.map(item => item.quantidade);
+
+        graficoSituacoes = new Chart(
+            document.getElementById('graficoSituacoes'),
+            {
+                type: 'doughnut',
+
+                data: {
+                    labels: labels,
+
+                    datasets: [{
+                        data: valores
+                    }]
+                },
+
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            }
+        );
+    }
+
+
+    async function carregarTipos() {
+
+        const dados = await buscarJson('/api/dashboard/tipos');
+
+        const labels = dados.map(item => item.tipo);
+        const valores = dados.map(item => item.quantidade);
+
+        graficoTipos = new Chart(
+            document.getElementById('graficoTipos'),
+            {
+                type: 'bar',
+
+                data: {
+                    labels: labels,
+
+                    datasets: [{
+                        label: 'Quantidade',
+                        data: valores
+                    }]
+                },
+
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            }
+        );
+    }
+
+
+    async function carregarPeriodo() {
+
+        const dataInicio = '2026-11-01';
+        const dataFim = '2026-11-30';
+
+        const dados = await buscarJson(
+            `/api/dashboard/chamados-periodo?dataInicio=${dataInicio}&dataFim=${dataFim}`
+        );
+
+        const labels = dados.map(item => item.data);
+        const valores = dados.map(item => item.quantidade);
+
+        graficoPeriodo = new Chart(
+            document.getElementById('graficoPeriodo'),
+            {
+                type: 'bar',
+
+                data: {
+                    labels: labels,
+
+                    datasets: [{
+                        label: 'Chamados concluídos',
+                        data: valores
+                    }]
+                },
+
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            }
+        );
+    }
+
+
+    async function filtrarChamados() {
+
+    try {
+
+        const status = document.getElementById('status').value;
+        const tipo = document.getElementById('tipo').value;
+        const dataInicio = document.getElementById('dataInicio').value;
+        const dataFim = document.getElementById('dataFim').value;
+
+        const parametros = new URLSearchParams();
+
+        if (status) {
+            parametros.append('status', status);
+        }
+
+        if (tipo) {
+            parametros.append('tipo', tipo);
+        }
+
+        if (dataInicio) {
+            parametros.append('dataInicio', dataInicio);
+        }
+
+        if (dataFim) {
+            parametros.append('dataFim', dataFim);
+        }
+
+        const chamados = await buscarJson(
+            `/api/chamados/filtro?${parametros.toString()}`
+        );
+
+        mostrarChamados(chamados);
+        atualizarIndicadoresFiltrados(chamados);
+        atualizarGraficosFiltrados(chamados);
+
+    } catch (erro) {
+
+        console.error("Erro ao filtrar chamados:", erro);
+
+        alert("Não foi possível realizar o filtro.");
+    }
+}
+
+function atualizarIndicadoresFiltrados(chamados) {
+
+    const abertos = chamados.filter(
+        chamado => chamado.status === 'ABERTO'
+    ).length;
+
+    const emAndamento = chamados.filter(
+        chamado => chamado.status === 'EM_ANDAMENTO'
+    ).length;
+
+    const concluidos = chamados.filter(
+        chamado => chamado.status === 'CONCLUIDO'
+    ).length;
+
+    const cancelados = chamados.filter(
+        chamado => chamado.status === 'CANCELADO'
+    ).length;
+
+    document.getElementById('totalChamados').textContent = chamados.length;
+    document.getElementById('chamadosAbertos').textContent = abertos;
+    document.getElementById('chamadosAndamento').textContent = emAndamento;
+    document.getElementById('chamadosConcluidos').textContent = concluidos;
+    document.getElementById('chamadosCancelados').textContent = cancelados;
+}
+
+function atualizarGraficosFiltrados(chamados) {
+
+    if (graficoPeriodo) {
+        graficoPeriodo.destroy();
+    }
+
+    if (graficoSituacoes) {
+        graficoSituacoes.destroy();
+    }
+
+    if (graficoTipos) {
+        graficoTipos.destroy();
+    }
+
+
+    // Situações
+
+    const situacoes = {
+        ABERTO: 0,
+        EM_ANDAMENTO: 0,
+        CONCLUIDO: 0,
+        CANCELADO: 0
+    };
+
+    chamados.forEach(chamado => {
+        situacoes[chamado.status]++;
+    });
+
+    graficoSituacoes = new Chart(
+        document.getElementById('graficoSituacoes'),
+        {
+            type: 'doughnut',
+
+            data: {
+                labels: [
+                    'ABERTO',
+                    'EM ANDAMENTO',
+                    'CONCLUIDO',
+                    'CANCELADO'
+                ],
+
+                datasets: [{
+                    data: [
+                        situacoes.ABERTO,
+                        situacoes.EM_ANDAMENTO,
+                        situacoes.CONCLUIDO,
+                        situacoes.CANCELADO
+                    ]
+                }]
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        }
+    );
+
+
+    // Tipos
+
+    const tipos = {};
+
+    chamados.forEach(chamado => {
+
+        if (!tipos[chamado.tipo]) {
+            tipos[chamado.tipo] = 0;
+        }
+
+        tipos[chamado.tipo]++;
+    });
+
+    graficoTipos = new Chart(
+        document.getElementById('graficoTipos'),
+        {
+            type: 'bar',
+
+            data: {
+                labels: Object.keys(tipos),
+
+                datasets: [{
+                    label: 'Quantidade',
+                    data: Object.values(tipos)
+                }]
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        }
+    );
+
+
+    // Chamados concluídos por período
+
+    const porData = {};
+
+    chamados
+        .filter(chamado =>
+            chamado.status === 'CONCLUIDO'
+            && chamado.dataConclusao
+        )
+        .forEach(chamado => {
+
+            const data = chamado.dataConclusao.substring(0, 10);
+
+            if (!porData[data]) {
+                porData[data] = 0;
+            }
+
+            porData[data]++;
+        });
+
+    graficoPeriodo = new Chart(
+        document.getElementById('graficoPeriodo'),
+        {
+            type: 'bar',
+
+            data: {
+                labels: Object.keys(porData),
+
+                datasets: [{
+                    label: 'Chamados concluídos',
+                    data: Object.values(porData)
+                }]
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        }
+    );
+}
+
+    function mostrarChamados(chamados) {
+
+        const tabela = document.getElementById('tabelaChamados');
+
+        tabela.innerHTML = '';
+
+        if (chamados.length === 0) {
+
+            tabela.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center text-secondary">
+                        Nenhum chamado encontrado.
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+        chamados.forEach(chamado => {
+
+            const data = chamado.dataAbertura
+                ? new Date(chamado.dataAbertura).toLocaleDateString('pt-BR')
+                : '-';
+
+tabela.innerHTML += `
+    <tr>
+        <td>${chamado.titulo}</td>
+        <td>${chamado.tipo}</td>
+        <td>${chamado.status.replace('_', ' ')}</td>
+        <td>${chamado.responsavel || '-'}</td>
+        <td>${chamado.consideracaoTecnica || '-'}</td>
+        <td>${data}</td>
+    </tr>
+`;
+        });
+    }
+
+
+    async function carregarChamados() {
+
+        const chamados = await buscarJson('/api/chamados');
+
+        mostrarChamados(chamados);
+    }
+
+
+    async function atualizarDashboard() {
+
+        try {
+
+            if (graficoPeriodo) {
+                graficoPeriodo.destroy();
+            }
+
+            if (graficoSituacoes) {
+                graficoSituacoes.destroy();
+            }
+
+            if (graficoTipos) {
+                graficoTipos.destroy();
+            }
+
+            await carregarIndicadores();
+            await carregarPeriodo();
+            await carregarSituacoes();
+            await carregarTipos();
+            await carregarChamados();
+
+        } catch (erro) {
+
+            console.error("Erro ao atualizar dashboard:", erro);
+
+            alert("Não foi possível atualizar os dados do dashboard.");
+        }
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        atualizarDashboard();
+
+    });
+
+</script>
+
+</body>
+</html>

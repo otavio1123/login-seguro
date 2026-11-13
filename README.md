@@ -1,8 +1,8 @@
 # Login Seguro
 
-Sistema web desenvolvido para a atividade prática de Login Completo, utilizando Java, Spring Boot, Spring Security, Thymeleaf e MongoDB Atlas.
+Sistema web desenvolvido com Java, Spring Boot, Spring Security, Thymeleaf e MongoDB Atlas.
 
-O projeto implementa cadastro, autenticação, autorização por perfis e gerenciamento de usuários. A estrutura foi organizada para que a lógica de autenticação possa ser reaproveitada futuramente em outros sistemas, com possibilidade de alteração da interface sem grandes mudanças no backend.
+O projeto possui cadastro e autenticação de usuários, controle de acesso por perfis, gerenciamento de usuários e um **Dashboard Administrativo de chamados técnicos**, integrado a uma API REST desenvolvida no próprio Spring Boot.
 
 ## Tecnologias utilizadas
 
@@ -16,68 +16,157 @@ O projeto implementa cadastro, autenticação, autorização por perfis e gerenc
 - Maven
 - Bootstrap 5
 - Bootstrap Icons
+- Chart.js
 - HTML
 - CSS
 - JavaScript
-- Git
-- GitHub
+- Git e GitHub
 
-## Funcionalidades
+## Principais funcionalidades
 
-O sistema possui as seguintes funcionalidades:
-
-- Cadastro de usuários
-- Validação dos dados informados no cadastro
-- Verificação de e-mail já cadastrado
-- Validação de confirmação de senha
-- Login utilizando e-mail e senha
-- Logout
-- Senhas armazenadas utilizando hash BCrypt
-- Controle de acesso utilizando Spring Security
-- Três perfis de acesso
-- Controle de rotas de acordo com o perfil
-- Página de acesso negado
-- Persistência de usuários no MongoDB Atlas
-- Persistência das sessões no MongoDB Atlas
+- Cadastro e login de usuários
+- Senhas protegidas com BCrypt
+- Logout e controle de sessão
+- Perfis `USUARIO`, `MODERADOR` e `ADMIN`
+- Controle de acesso às rotas com Spring Security
 - Gerenciamento de usuários pelo administrador
-- Alteração de perfil dos usuários
 - Ativação e desativação de contas
-- Proteção para impedir que o administrador altere o próprio perfil ou desative a própria conta
-- Exibição de opções da interface de acordo com o perfil autenticado
-- Opção para mostrar e ocultar a senha nos formulários
-- Interface construída com Thymeleaf e Bootstrap
-- CSS separado da lógica da aplicação
-- Recursos visuais compartilhados através de fragments do Thymeleaf
+- Alteração de perfis
+- Persistência de usuários e sessões no MongoDB Atlas
+- API REST para chamados técnicos
+- Dashboard Administrativo
+- Indicadores de chamados
+- Gráficos por período, situação e tipo
+- Filtros por data, status e tipo
+- Exibição das considerações técnicas dos chamados
+- Atualização dos dados do dashboard
 
-## Perfis de acesso
+## Conta ADMIN para avaliação
 
-O sistema trabalha com três perfis.
+Para testar as funcionalidades administrativas e acessar o Dashboard, utilize:
 
-### USUARIO
+**E-mail:** `admin@teste.com`  
+**Senha:** `teste123`
 
-Perfil atribuído automaticamente a novos cadastros.
+Após o login, acesse a **Área Administrativa** e selecione **Dashboard de Chamados**.
 
-Possui acesso à área destinada aos usuários autenticados.
+Também é possível acessar diretamente:
 
-### MODERADOR
+```text
+http://localhost:8080/dashboard
+```
 
-Possui acesso à área de usuário e à área de moderação.
+O Dashboard é protegido pelo Spring Security e somente usuários com perfil `ADMIN` possuem acesso.
 
-### ADMIN
+## Como executar
 
-Possui acesso às áreas de usuário, moderação e administração.
+Clone o repositório:
 
-O administrador também pode acessar a tela de gerenciamento de usuários, onde é possível:
+```bash
+git clone https://github.com/otavio1123/login-seguro.git
+```
 
-- Alterar o perfil de um usuário
-- Ativar uma conta
-- Desativar uma conta
+Entre na pasta:
 
-Por segurança, o administrador autenticado não pode alterar o próprio perfil nem desativar a própria conta.
+```bash
+cd login-seguro
+```
 
-## Funcionamento do controle de acesso
+A conexão com o MongoDB Atlas é configurada através da variável de ambiente:
 
-No momento do cadastro, todo novo usuário recebe automaticamente o perfil:
+```text
+MONGODB_URI
+```
 
+A aplicação utiliza:
 
-USUARIO
+```properties
+spring.mongodb.uri=${MONGODB_URI}
+spring.mongodb.database=login_seguro
+```
+
+No Windows, execute:
+
+```powershell
+.\mvnw.cmd spring-boot:run
+```
+
+Em Linux/macOS:
+
+```bash
+./mvnw spring-boot:run
+```
+
+Depois acesse:
+
+```text
+http://localhost:8080
+```
+
+## Dashboard Administrativo
+
+O Dashboard foi desenvolvido utilizando **Thymeleaf, Bootstrap, JavaScript e Chart.js**.
+
+Os dados exibidos na tela são obtidos através de uma **API REST desenvolvida em Spring Boot**, que consulta os chamados armazenados na collection `chamados` do MongoDB Atlas.
+
+O JavaScript utiliza `fetch` para consumir os endpoints da API e atualizar os indicadores, gráficos e tabela do Dashboard.
+
+São apresentados:
+
+- Total de chamados
+- Chamados abertos
+- Chamados em andamento
+- Chamados concluídos
+- Chamados cancelados
+- Chamados concluídos por período
+- Distribuição por situação
+- Tipos de chamados mais atendidos
+- Lista e consideração técnica dos chamados
+
+Os filtros permitem consultar os chamados por **data, status e tipo** e atualizam os dados apresentados no Dashboard.
+
+## API
+
+Principais endpoints utilizados:
+
+```text
+GET /api/chamados
+GET /api/chamados/filtro
+POST /api/chamados
+PUT /api/chamados/{id}/status
+PUT /api/chamados/{id}/consideracao
+
+GET /api/dashboard/indicadores
+GET /api/dashboard/chamados-periodo
+GET /api/dashboard/situacoes
+GET /api/dashboard/tipos
+```
+
+As rotas relacionadas aos chamados e ao Dashboard são protegidas e acessíveis apenas pelo perfil `ADMIN`.
+
+## Banco de dados
+
+O projeto utiliza MongoDB Atlas com as principais collections:
+
+```text
+usuarios
+sessions
+chamados
+```
+
+- `usuarios`: dados dos usuários cadastrados
+- `sessions`: sessões autenticadas
+- `chamados`: chamados técnicos utilizados pela API e pelo Dashboard
+
+## Vídeo de apresentação
+
+O vídeo abaixo apresenta o funcionamento do sistema, o acesso com perfil de administrador e as principais funcionalidades do Dashboard Administrativo.
+
+[▶ Assistir ao vídeo de apresentação](./video-apresentacao.mp4)
+
+## Autor
+
+**Otávio Ramos Ribeiro**
+
+Sistemas de Informação  
+Universidade de Mogi das Cruzes – UMC

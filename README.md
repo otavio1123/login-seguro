@@ -157,6 +157,11 @@ chamados
 - `usuarios`: dados dos usuários cadastrados
 - `sessions`: sessões autenticadas
 - `chamados`: chamados técnicos utilizados pela API e pelo Dashboard
+## Documentação da atividade
+
+A documentação completa da atividade, contendo os requisitos funcionais e não funcionais, a documentação dos endpoints, exemplos de requisição e resposta e evidências dos testes realizados, está disponível no arquivo abaixo.
+
+[Abrir documentação da atividade](./Documentacao_Dashboard_Administrativo.pdf)
 
 ## Vídeo de apresentação
 
